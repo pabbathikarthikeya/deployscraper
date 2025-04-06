@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import requests
@@ -60,16 +61,25 @@ keyword = st.text_input("🧠 Keyword (e.g., Data Scientist)")
 location = st.text_input("📍 Location (e.g., India)")
 company = st.text_input("🏢 Company (optional)")
 
+# 🔢 Number of Results Slider
+num_results = st.slider(
+    label="Number of Results",
+    min_value=10,
+    max_value=100,
+    value=30,
+    help="Select how many leads to fetch (max 100)"
+)
+
 # 🔍 Scraping and Scoring
 if st.button("🚀 Scrape Leads"):
     if not keyword or not location:
         st.warning("Please enter both keyword and location.")
     else:
-        with st.spinner("Scraping data from LinkedIn..."):
-            df = scrape_leads_with_serpapi(api_key, keyword, location, company)
+        with st.spinner("🔍 Scraping data from LinkedIn..."):
+            df = scrape_leads_with_serpapi(api_key, keyword, location, company, num_results=num_results)
 
             if df.empty:
-                st.error("No leads found. Try different inputs.")
+                st.error("❌ No leads found. Try different inputs.")
             else:
                 df['Lead Score'] = df.apply(score_lead, axis=1)
                 df = df.sort_values(by='Lead Score', ascending=False)
